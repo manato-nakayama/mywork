@@ -1,0 +1,25 @@
+.ope1 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.ope2 {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.button {
+    border: 2px solid black;
+    padding: 5px 20px;
+    transition: .25s background-color;
+}
+
+.button.on {
+    background-color: #e95b6b;
+}
