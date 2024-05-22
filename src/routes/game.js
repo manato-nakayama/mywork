@@ -3,16 +3,17 @@ import './game.css';
 
 function Game() {
     // useStateフックを使用してresultを宣言
-    const [resultValue, setResultValue] = useState('');
     const [Ope1, setOpe1] = useState(null);
     const [Ope2, setOpe2] = useState(null);
     const [operands, setOperands] = useState([]);
     const [operators, setOperators] = useState([]);
-    const [str, setStr] = useState('');
+    const [problemFormula, setProblemFormula] = useState(null);
+    const [culcNumberFormula, setClucNumberFormula] = useState(null);
     const [culcNumber, setClucNumber] = useState('');
     const [checkFormula, setCheckFormula] = useState(null);
-    const [checkNumber, setCheckNumber] = useState(null);
+    const [normalFormula, setNormalFormula] = useState(null);
     const [trueOrFalse, settrueOrFlase] = useState(null);
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
     const [data, setData] = useState(null);
 
     // ランダムな値と演算子を生成してoperandとoperator配列に追加する
@@ -44,11 +45,15 @@ function Game() {
                 newStr += newOperators[i] + " ";
             }
         }
-        setStr(newStr);
         setClucNumber(eval(newStr));
+        setClucNumberFormula(newStr);
         // console.log(newStr);
     }, []);
 
+    //ボタンのOn/Off
+    useEffect(() => {
+        buttonCheck();
+    }, [Ope1, Ope2]);
 
     //値の確認
     // console.log(operands, operators);
@@ -61,17 +66,20 @@ function Game() {
         </tr>);
     })
 
-    //問題式の作成
-    var probFormla = "";
-    for (let i = 0; i < numberOfOperands; i++) {
-        if (i == numberOfOperands - 1) {
-            probFormla += operands[i];
+    useEffect(() => {
+        //問題式の作成
+        var probFormula = "";
+        for (let i = 0; i < numberOfOperands; i++) {
+            if (i == numberOfOperands - 1) {
+                probFormula += operands[i];
+            }
+            else {
+                probFormula += operands[i] + " ";
+                probFormula += '□ ';
+            }
         }
-        else {
-            probFormla += operands[i] + " ";
-            probFormla += '□ ';
-        }
-    }
+        setProblemFormula(probFormula);
+    }, [operands]);
 
     //回答式の作成
     var ansFormla = "";
@@ -84,11 +92,9 @@ function Game() {
             ansFormla += '<span>□ </span>';
         }
     }
-    // document.body.innerHTML += ansFormla;
 
     //一つ目の演算子のボタンを押されたら
     const operandInput1 = (e) => {
-        // const id = document.getElementById();
         const id = e.currentTarget.id
         setOpe1(id);
         // console.log(id);
@@ -96,15 +102,30 @@ function Game() {
 
     //二つ目の演算子のボタンを押されたら
     const operandInput2 = (e) => {
-        // const id = document.getElementById();
         const id = e.currentTarget.id
         setOpe2(id);
         // console.log(id);
     }
 
+    //決定ボタンを押せるようになる基準を指定
+    function buttonCheck() {
+        // 演算子入力の値を確認
+        let check = '';
+        // console.log(Ope1, Ope2);
+        if (Ope1 && Ope2) {
+            check = "true";
+        }
+        else {
+            check = "false";
+        }
+
+        // useStateフックを使用してボタンのdisabled状態を更新
+        setIsButtonDisabled(check !== "true");
+    }
+
     //ユーザが入力した式を作成
     const checkFormulaFunc = () => {
-        console.log(operands, operators);
+        // console.log(operands, operators);
         const checkOpe = [Ope1, Ope2];
         var checktimeFormula = "";
         for (let i = 0; i < numberOfOperands; i++) {
@@ -139,15 +160,25 @@ function Game() {
         const checkNumber = eval(checktimeFormula);
         checkTrueOrFalse(checkNumber);
 
+        // addData(checktimeFormula);
         addData(checktimeFormula);
     }
 
+    // 生成式と入力式の結果があっているか確認
     function checkTrueOrFalse(checkNumber) {
         //作成したものを比較
         // console.log(culcNumber, checkNumber);
+        //正解なら表示して式を更新
         if (culcNumber == checkNumber) {
             settrueOrFlase('正解');
+            // problemFormulaの内容を演算子付きの式に更新
+            const replacedString = culcNumberFormula.replace(/\*|\//g, function (match) {
+                return match === "*" ? "×" : "÷";
+            });
+            //problemFormulaを置き換えたものに更新
+            setProblemFormula(replacedString);
         }
+        //不正解なら表示するのみ
         else settrueOrFlase('不正解');
     }
 
@@ -156,14 +187,29 @@ function Game() {
         //受け取り変数の確認
         // console.log(checktimeFormula);
 
+        //通常式の初期化
+        var normalFormula = '';
+
+        //送るために一般演算子の式を作成
+        const checkOpe = [Ope1, Ope2];
+        for (let i = 0; i < numberOfOperands; i++) {
+            if (i == 2) normalFormula += operands[i];
+            else {
+                normalFormula += operands[i];
+                normalFormula += ' ' + checkOpe[i] + ' ';
+            }
+        }
+        //一般演算子の式をセット
+        setNormalFormula(normalFormula);
+
         // 送るオブジェクトの作成
-        const formula = checktimeFormula + " = " + eval(checktimeFormula);
+        const formula = normalFormula + " = " + eval(checktimeFormula);
         const newData = {
             formula: formula
         };
 
         //作成データの確認
-        console.log(newData);
+        // console.log(newData);
         fetch('http://localhost:8080/game/add', {
             method: 'POST',
             headers: {
@@ -188,6 +234,7 @@ function Game() {
         fetch('http://localhost:8080/game')
             .then(response => response.json())
             .then(data => {
+                //データを新規順にしている
                 setData(data.reverse());
             })
             .catch(error => {
@@ -196,11 +243,33 @@ function Game() {
             });
     }
 
+    // ページをリロードしてデータベースを初期化する関数
+    const ReloadAndInitializeDatabase = () => {
+        fetch('http://localhost:8080/game/initialize-database', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Database initialized successfully');
+                } else {
+                    console.error('Failed to initialize database');
+                }
+            })
+            .catch(error => {
+                console.error('Error initializing database:', error);
+            });
+        window.location.reload();
+    }
+
     // 式の表示
     return (
         <div>
             <h2>問題式</h2>
-            <p>{probFormla} = {culcNumber}</p>
+            <p>{problemFormula} = {culcNumber}</p>
+            <button onClick={ReloadAndInitializeDatabase}>問題を更新</button>
 
             {/* <form>
                 <input type="text" placeholder='演算子を入力'></input>
@@ -210,7 +279,7 @@ function Game() {
 
             {checkFormula && (
                 <div>
-                    <p><br></br>{checkFormula} = {eval(checkFormula)}</p>
+                    <p><br></br>{normalFormula} = {eval(checkFormula)}</p>
                     <p>判定結果<br></br>{trueOrFalse}</p>
                 </div>
             )}
@@ -239,7 +308,7 @@ function Game() {
             </div>
             {/* {probFormla} = {eval(str)}</p> */}
             <br></br>
-            <button onClick={checkFormulaFunc}>決定</button>
+            <button onClick={checkFormulaFunc} disabled={isButtonDisabled}>決定</button>
 
             {/* <h2>ログ</h2> */}
             <table border="1">
