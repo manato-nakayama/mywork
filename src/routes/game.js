@@ -177,6 +177,9 @@ function Game() {
             });
             //problemFormulaを置き換えたものに更新
             setProblemFormula(replacedString);
+            //決定ボタンを押せないようにする
+            let element = document.getElementById("decide");
+            element.classList.add("display-none");
         }
         //不正解なら表示するのみ
         else settrueOrFlase('不正解');
@@ -267,50 +270,58 @@ function Game() {
     // 式の表示
     return (
         <div>
-            <h2>問題式</h2>
-            <p>{problemFormula} = {culcNumber}</p>
-            <button onClick={ReloadAndInitializeDatabase}>問題を更新</button>
-
-            {/* <form>
-                <input type="text" placeholder='演算子を入力'></input>
-            </form> */}
-            <br></br>
-            <h2>回答</h2>
-
-            {checkFormula && (
-                <div>
-                    <p><br></br>{normalFormula} = {eval(checkFormula)}</p>
+            <h1>ブラックボックス演算子</h1>
+            <div className='container'>
+                <div className='problem'>
+                    <h2>問題式</h2>
+                    <p>{problemFormula} = {culcNumber}</p>
                     <p>判定結果<br></br>{trueOrFalse}</p>
                 </div>
-            )}
-            <br></br>
-            <p>一つ目の演算子</p>
-            {Ope1 && (
-                <p>{Ope1}</p>
-            )}
-            <div className="ope1">
-                <button id="+" onClick={operandInput1}>+</button>
-                <button id="-" onClick={operandInput1}>-</button>
-                <button id="×" onClick={operandInput1}>×</button>
-                <button id="÷" onClick={operandInput1}>÷</button>
-            </div>
+                <br></br>
+                <div className='answer'>
+                    <h2>回答</h2>
+                    {checkFormula && (
+                        <div>
+                            <p><br></br>{normalFormula} = {eval(checkFormula)}</p>
+                        </div>
+                    )}
+                    <br></br>
+                    <div className='opebox'>
+                        <div>
+                            <p>一つ目の演算子</p>
+                            {Ope1 && (
+                                <p>{Ope1}</p>
+                            )}
+                            <div className="ope1">
+                                <button className='ope1button' id="+" onClick={operandInput1}>+</button>
+                                <button className='ope1button' id="-" onClick={operandInput1}>-</button>
+                                <button className='ope1button' id="×" onClick={operandInput1}>×</button>
+                                <button className='ope1button' id="÷" onClick={operandInput1}>÷</button>
+                            </div>
+                        </div>
 
-            <p>二つ目の演算子</p>
-            {Ope2 && (
-                <p>{Ope2}</p>
-            )}
+                        <div>
+                            <p>二つ目の演算子</p>
+                            {Ope2 && (
+                                <p>{Ope2}</p>
+                            )}
 
-            <div className="ope2">
-                <button id="+" onClick={operandInput2}>+</button>
-                <button id="-" onClick={operandInput2}>-</button>
-                <button id="×" onClick={operandInput2}>×</button>
-                <button id="÷" onClick={operandInput2}>÷</button>
+                            <div className="ope2">
+                                <button className='ope2button' id="+" onClick={operandInput2}>+</button>
+                                <button className='ope2button' id="-" onClick={operandInput2}>-</button>
+                                <button className='ope2button' id="×" onClick={operandInput2}>×</button>
+                                <button className='ope2button' id="÷" onClick={operandInput2}>÷</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             {/* {probFormla} = {eval(str)}</p> */}
             <br></br>
-            <button onClick={checkFormulaFunc} disabled={isButtonDisabled}>決定</button>
+            <button id="decide" onClick={checkFormulaFunc} disabled={isButtonDisabled}>決定</button>
 
-            {/* <h2>ログ</h2> */}
+            <p><button id="update" onClick={ReloadAndInitializeDatabase}>問題を更新</button></p>
+
             <table border="1">
                 <thead>
                     <tr>

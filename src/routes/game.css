@@ -1,25 +1,130 @@
-.ope1 {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
+.container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.problem {
+    width: 45%;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.answer {
+    width: 45%;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h1 {
+    background-color: lightgreen;
+    padding: 20px;
+    text-align: center;
+}
+
+p {
+    font-size: 25px;
+}
+
+.opebox {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    gap: 30px;
+}
+
+.ope1,
 .ope2 {
+    width: 100%;
     display: flex;
     flex-direction: row;
-    gap: 10px;
-    width: 100%;
     justify-content: center;
+    gap: 0px;
 }
 
-.button {
-    border: 2px solid black;
-    padding: 5px 20px;
-    transition: .25s background-color;
+.ope1button,
+.ope2button {
+    width: 60px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
 }
 
-.button.on {
-    background-color: #e95b6b;
+
+.ope1 button:hover,
+.ope2 button:hover {
+    background-color: #e0e0e0;
+}
+
+#decide {
+    display: block;
+    width: 5opx;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    background-color: orangered;
+    color: white;
+    font-size: 20px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#decide:hover {
+    background-color: orange;
+}
+
+#update {
+    border: none;
+    /* 枠線をなくす */
+    border-radius: 5px;
+    /* 角丸をつける */
+    padding: 10px 15px;
+    /* ボタンの内側の余白 */
+    background-color: #5a9430;
+    /* ボタンの背景色 */
+    color: white;
+    /* ボタンの文字色 */
+    text-align: center;
+    /* ボタンのテキストを中央揃えにする */
+    font-size: 15px;
+    /* テキストのフォントサイズ */
+    cursor: pointer;
+    /* マウスポインタを変更する */
+    transition: background-color 0.3s;
+    /* 0.3s掛けて色を変える */
+}
+
+#update:hover {
+    background-color: rgb(156, 224, 156);
+}
+
+.display-none {
+    display: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    border: 1px solid #ccc;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
 }

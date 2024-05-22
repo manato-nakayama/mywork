@@ -14,7 +14,7 @@ import Token from './routes/token';
 function App() {
   return (
     <div className="App">
-      <h1>Hello React Router v6</h1>
+      {/* <h1>Hello React Router v6</h1> */}
       {/* <ul>
         <li>
           <Link to="/">Home</Link>
