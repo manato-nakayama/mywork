@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './game.css';
 
 function Game() {
-    // useStateフックを使用してresultを宣言
+    // useStateフックを使用して様々な変数を宣言
     const [Ope1, setOpe1] = useState(null);
     const [Ope2, setOpe2] = useState(null);
     const [operands, setOperands] = useState([]);
@@ -126,26 +126,18 @@ function Game() {
     //ユーザが入力した式を作成
     const checkFormulaFunc = () => {
         // console.log(operands, operators);
+        //ユーザーが入力した演算子を配列にする
         const checkOpe = [Ope1, Ope2];
+
         var checktimeFormula = "";
+
+        //繰り返しをして乗除演算子は変換しながら"="の左側を作る
         for (let i = 0; i < numberOfOperands; i++) {
             if (i == 2) checktimeFormula += operands[i];
             else {
                 checktimeFormula += operands[i];
-                if (checkOpe[i] == 'add') {
-                    checktimeFormula += ' + ';
-                }
-                else if (checkOpe[i] == 'sub') {
-                    checktimeFormula += ' - ';
-                }
-                else if (checkOpe[i] == 'mul') {
+                if (checkOpe[i] == '×') {
                     checktimeFormula += ' * ';
-                }
-                else if (checkOpe[i] == '×') {
-                    checktimeFormula += ' * ';
-                }
-                else if (checkOpe[i] == 'div') {
-                    checktimeFormula += ' / ';
                 }
                 else if (checkOpe[i] == '÷') {
                     checktimeFormula += ' / ';
@@ -155,12 +147,14 @@ function Game() {
                 }
             }
         }
+        //checkFormulaに格納
         setCheckFormula(checktimeFormula);
-        // console.log(checktimeFormula);
+
+        //計算結果をcheckNumberに格納して生成式の計算結果と比較
         const checkNumber = eval(checktimeFormula);
         checkTrueOrFalse(checkNumber);
 
-        // addData(checktimeFormula);
+        //データの追加をリクエスト
         addData(checktimeFormula);
     }
 
@@ -168,9 +162,14 @@ function Game() {
     function checkTrueOrFalse(checkNumber) {
         //作成したものを比較
         // console.log(culcNumber, checkNumber);
+        //正解・不正解を入れる要素を変数に
+        var element = document.getElementById("trueOrFalse");
         //正解なら表示して式を更新
         if (culcNumber == checkNumber) {
             settrueOrFlase('正解');
+            //クラスを追加
+            element.classList.add("correct");
+            element.classList.remove("incorrect");
             // problemFormulaの内容を演算子付きの式に更新
             const replacedString = culcNumberFormula.replace(/\*|\//g, function (match) {
                 return match === "*" ? "×" : "÷";
@@ -178,11 +177,14 @@ function Game() {
             //problemFormulaを置き換えたものに更新
             setProblemFormula(replacedString);
             //決定ボタンを押せないようにする
-            let element = document.getElementById("decide");
-            element.classList.add("display-none");
+            // element = document.getElementById("decide");
+            // element.classList.toggle("display-none");
         }
-        //不正解なら表示するのみ
-        else settrueOrFlase('不正解');
+        //不正解なら表示して属性を付与
+        else {
+            settrueOrFlase('不正解');
+            element.classList.add("incorrect");
+        }
     }
 
     //データを追加する関数
@@ -205,7 +207,7 @@ function Game() {
         //一般演算子の式をセット
         setNormalFormula(normalFormula);
 
-        // 送るオブジェクトの作成
+        // springbootへ送るオブジェクトの作成
         const formula = normalFormula + " = " + eval(checktimeFormula);
         const newData = {
             formula: formula
@@ -213,11 +215,14 @@ function Game() {
 
         //作成データの確認
         // console.log(newData);
+
+        //データ追加のリクエストをする
         fetch('http://localhost:8080/game/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            //newDataをjson形式で渡す。
             body: JSON.stringify(newData)
         })
             .then(response => {
@@ -234,7 +239,9 @@ function Game() {
 
     //データを再取得する関数
     const fetchCheckData = () => {
+        //ここにHTTPのGETリクエストをする
         fetch('http://localhost:8080/game')
+            //responseをjson形式に
             .then(response => response.json())
             .then(data => {
                 //データを新規順にしている
@@ -246,8 +253,9 @@ function Game() {
             });
     }
 
-    // ページをリロードしてデータベースを初期化する関数
+    // ページをリロードしてデータベースを初期化する関数を呼び出す
     const ReloadAndInitializeDatabase = () => {
+        //該当機能の場所に対してHTTPリクエストをする
         fetch('http://localhost:8080/game/initialize-database', {
             method: 'POST',
             headers: {
@@ -264,10 +272,12 @@ function Game() {
             .catch(error => {
                 console.error('Error initializing database:', error);
             });
+
+        //ページのリロード
         window.location.reload();
     }
 
-    // 式の表示
+    // 一覧表示
     return (
         <div>
             <h1>ブラックボックス演算子</h1>
@@ -275,23 +285,27 @@ function Game() {
                 <div className='problem'>
                     <h2>問題式</h2>
                     <p>{problemFormula} = {culcNumber}</p>
-                    <p>判定結果<br></br>{trueOrFalse}</p>
+                    <br></br>
+                    <p>判定結果</p>
+                    {!trueOrFalse && (<br></br>)}
+                    <p id="trueOrFalse">{trueOrFalse}</p>
                 </div>
                 <br></br>
                 <div className='answer'>
                     <h2>回答</h2>
                     {checkFormula && (
                         <div>
-                            <p><br></br>{normalFormula} = {eval(checkFormula)}</p>
+                            <p>{normalFormula} = {eval(checkFormula)}</p>
                         </div>
                     )}
-                    <br></br>
+                    {!checkFormula && (<br></br>)}
                     <div className='opebox'>
                         <div>
                             <p>一つ目の演算子</p>
                             {Ope1 && (
                                 <p>{Ope1}</p>
                             )}
+                            {!Ope1 && (<p></p>)}
                             <div className="ope1">
                                 <button className='ope1button' id="+" onClick={operandInput1}>+</button>
                                 <button className='ope1button' id="-" onClick={operandInput1}>-</button>
@@ -305,6 +319,7 @@ function Game() {
                             {Ope2 && (
                                 <p>{Ope2}</p>
                             )}
+                            {!Ope2 && (<p></p>)}
 
                             <div className="ope2">
                                 <button className='ope2button' id="+" onClick={operandInput2}>+</button>

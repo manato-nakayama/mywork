@@ -7,20 +7,30 @@ body {
 .container {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .problem {
     width: 45%;
     background-color: #f0f0f0;
-    padding: 20px;
+    padding: 10px;
+    margin-left: 10px;
     border-radius: 10px;
+}
+
+.correct {
+    color: red;
+}
+
+.incorrect {
+    color: blue;
 }
 
 .answer {
     width: 45%;
     background-color: #f0f0f0;
-    padding: 20px;
+    padding: 10px;
+    margin-right: 10px;
     border-radius: 10px;
 }
 
@@ -31,14 +41,15 @@ h1 {
 }
 
 p {
-    font-size: 25px;
+    font-size: 20px;
+    height: 20px;
 }
 
 .opebox {
     display: flex;
     justify-content: center;
     flex-direction: row;
-    gap: 30px;
+    gap: 70px;
 }
 
 .ope1,
@@ -61,14 +72,14 @@ p {
 }
 
 
-.ope1 button:hover,
-.ope2 button:hover {
+.ope1button:hover,
+.ope2button:hover {
     background-color: #e0e0e0;
 }
 
 #decide {
     display: block;
-    width: 5opx;
+    width: 5%;
     padding: 10px;
     margin-top: 20px;
     text-align: center;
@@ -76,7 +87,7 @@ p {
     border-radius: 5px;
     background-color: orangered;
     color: white;
-    font-size: 20px;
+    font-size: 15px;
     margin: 0 auto;
     cursor: pointer;
     transition: background-color 0.3s;
@@ -111,14 +122,10 @@ p {
     background-color: rgb(156, 224, 156);
 }
 
-.display-none {
-    display: none;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 5%
 }
 
 table th,
